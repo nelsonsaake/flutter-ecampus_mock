@@ -18,12 +18,15 @@ class _SearchState extends State<Search> {
 
   double searchTextSize;
 
+  Color suffixIconColor;
+
   @override
   void initState() {
-
     maxLines = 1;
 
     searchTextSize = 24;
+
+    suffixIconColor = Colors.grey;
 
     super.initState();
   }
@@ -31,107 +34,74 @@ class _SearchState extends State<Search> {
   void onFocusChanged(bool hasfocus) {
     final int onFocusMaxLines = 5;
     final double onFocusSearchTextSize = 32.0;
+    final Color onFocusSuffixIconColor = Theme.of(context).primaryColor;
 
     final int offFocusLines = 1;
     final double offFocusSearchTextSize = 24.0;
+    final Color offFocusSuffixIconColor = Colors.grey;
 
     if (hasfocus) {
       setState(() {
         maxLines = onFocusMaxLines;
         searchTextSize = onFocusSearchTextSize;
+        suffixIconColor = onFocusSuffixIconColor;
       });
     } else {
       setState(() {
         maxLines = offFocusLines;
         searchTextSize = offFocusSearchTextSize;
+        suffixIconColor = offFocusSuffixIconColor;
       });
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    final searchInputDecoration = InputDecoration(
+    InputDecoration searchInputDecoration = InputDecoration(
       //
       border: OutlineInputBorder(
-        borderRadius: BorderRadius.all(Radius.circular(8)),
+        borderRadius: defaultBorderRadius,
       ),
 
       //
       contentPadding: EdgeInsets.fromLTRB(16, 0, 16, 0),
+
+      suffix: IconButton(
+        icon: Icon(Icons.search, color: suffixIconColor),
+        onPressed: () {},
+      ),
     );
 
     return Container(
 
       //
-      constraints: BoxConstraints(
-        minWidth: MediaQuery.of(context).size.width,
-        minHeight: 200
-      ),
-
-      color: Theme.of(context).primaryColor,
-
-      //
-      child: /*Material*/ Container(
-        // elevation: 5,
-        // borderRadius: BorderRadius.all(Radius.circular(8)),
+      child: Material(
+        // elevation: defaultElevation,
+        borderRadius: defaultBorderRadius,
 
         //
-        child: Row(
+        child: FocusScope(
+          onFocusChange: (bool hasfocus) => onFocusChanged(hasfocus),
+          child: TextField(
+            // adds padding, border radius, outline
+            decoration: searchInputDecoration,
 
-          //
-          children: [
-            // search keyword input
-            // FocusScope(
-            //   onFocusChange: (bool hasfocus) => onFocusChanged(hasfocus),
-            //   child: TextField(
-            //     // adds padding, border radius, outline
-            //     decoration: searchInputDecoration,
-            //
-            //     // when in focus, the text would be larger
-            //     style: TextStyle(fontSize: searchTextSize),
-            //
-            //     // I use the variable because this property will change overtime
-            //     // when in focus it would display more than one line of text
-            //     // otherwise just display one line
-            //     keyboardType: TextInputType.text,
-            //     minLines: 1,
-            //     maxLines: maxLines,
-            //
-            //     // for now, just use it to set the text
-            //     controller: controller,
-            //
-            //     // to provide suggestions
-            //     enableSuggestions: true,
-            //   ),
-            // ),
+            // when in focus, the text would be larger
+            style: TextStyle(fontSize: searchTextSize),
 
-            TextField(
-              // adds padding, border radius, outline
-              decoration: searchInputDecoration,
+            // I use the variable because this property will change overtime
+            // when in focus it would display more than one line of text
+            // otherwise just display one line
+            keyboardType: TextInputType.text,
+            minLines: 1,
+            maxLines: maxLines,
 
-              // when in focus, the text would be larger
-              // style: TextStyle(fontSize: searchTextSize),
+            // for now, just use it to set the text
+            controller: controller,
 
-              // I use the variable because this property will change overtime
-              // when in focus it would display more than one line of text
-              // otherwise just display one line
-              keyboardType: TextInputType.text,
-              minLines: 1,
-              maxLines: maxLines,
-
-              // for now, just use it to set the text
-              // controller: controller,
-
-              // to provide suggestions
-              // enableSuggestions: true,
-            ),
-
-            //
-            IconButton(
-              icon: Icon(Icons.search, color: Theme.of(context).primaryColor),
-              onPressed: () {},
-            ),
-          ],
+            // to provide suggestions
+            enableSuggestions: true,
+          ),
         ),
       ),
     );
